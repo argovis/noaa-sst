@@ -26,7 +26,7 @@ while True:
         lonidx = math.floor(360*random.random())
         timeidx = math.floor(1727*random.random())
         data = list(db.noaaOIsst.find({"_id": str(tidylon(upstream['lon'][lonidx].to_dict()['data'])) + "_" + str(upstream['lat'][latidx].to_dict()['data'])}))[0]
-        if data['data'][0][timeidx] != round(upstream['sst'][timeidx, latidx, lonidx].to_dict()['data'], 2):
+        if round(data['data'][0][timeidx],2) != round(upstream['sst'][timeidx, latidx, lonidx].to_dict()['data'], 2):
                 print(latidx, lonidx, timeidx, data['data'][0][timeidx], upstream['sst'][timeidx, latidx, lonidx].to_dict()['data'])
         else:
                 print('ok')
