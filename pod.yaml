@@ -9,6 +9,9 @@ spec:
   - name: sst-sync
     imagePullPolicy: Always
     image: argovis/noaa-sst:dev
+    env:
+    - name: MONGODB_URI
+      value: mongodb://database/argo
     #command: ['sleep', '1000000']
     resources:
       requests:

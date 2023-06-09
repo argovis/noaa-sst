@@ -50,7 +50,7 @@ impl std::convert::TryFrom<netcdf::attribute::AttrValue> for Wrapper {
 }
 ////////////////////
 
-fn find_basin(basins: &netcdf::Variable, longitude: f64, latitude: f64) -> i64 {    
+fn find_basin(basins: &netcdf::Variable, longitude: f64, latitude: f64) -> i32 {    
     let lonplus = (longitude-0.5).ceil()+0.5;
     let lonminus = (longitude-0.5).floor()+0.5;
     let latplus = (latitude-0.5).ceil()+0.5;
@@ -86,7 +86,7 @@ fn find_basin(basins: &netcdf::Variable, longitude: f64, latitude: f64) -> i64 {
     }
 
     match basins.value::<i64,_>(closecorner_idx){
-        Ok(idx) => idx,
+        Ok(idx) => idx as i32,
         Err(e) => panic!("basin problems: {:?} {:#?}", e, closecorner_idx)
     }   
 }
@@ -191,7 +191,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 "basin": basin,
                 "geolocation": {
                     "type": "Point",
-                    "coordinates": [lat, lon]
+                    "coordinates": [lon, lat]
                 },
                 "data": [ssts.clone()]
             };
