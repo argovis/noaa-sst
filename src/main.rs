@@ -109,6 +109,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // // collection objects
     let noaasst = client.database("argo").collection("noaaOIsst");
     let sst_meta = client.database("argo").collection("timeseriesMeta");
+    let summaries = client.database("argo").collection("summaries");
 
     // Rust structs to serialize time properly
     #[derive(Serialize, Deserialize, Debug)]
@@ -125,6 +126,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
         date_updated_argovis: DateTime,
         timeseries: Vec<DateTime>,
         source: Vec<Sourcedoc>
+    }
+
+    #[derive(Serialize, Deserialize, Debug)]
+    struct summaryDoc {
+        _id: String,
+        data: Vec<String>,
+        longitude_grid_spacing_degrees: f64,
+        latitude_grid_spacing_degrees: f64,
+        longitude_center: f64,
+        latitude_center: f64
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -170,8 +181,19 @@ async fn main() -> Result<(), Box<dyn Error>> {
         )
     };
     let metadata_doc = bson::to_document(&metadata).unwrap();
-
     sst_meta.insert_one(metadata_doc.clone(), None).await?;
+
+    // construct summary doc
+    let summary = summaryDoc {
+        _id: String::from("noaasstsummary"),
+        data: vec!(String::from("sst")),
+        longitude_grid_spacing_degrees: 1.0,
+        latitude_grid_spacing_degrees: 1.0,
+        longitude_center: 0.5,
+        latitude_center: 0.5
+    };
+    let summary_doc = bson::to_document(&summary).unwrap();
+    summaries.insert_one(summary_doc.clone(), None).await?;
 
     // construct data docs
     for latidx in 0..180 {
