@@ -108,7 +108,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // // collection objects
     let noaasst = client.database("argo").collection("noaaOIsst");
-    let sst_meta = client.database("argo").collection("noaaOIsstMeta");
+    let sst_meta = client.database("argo").collection("timeseriesMeta");
 
     // Rust structs to serialize time properly
     #[derive(Serialize, Deserialize, Debug)]
