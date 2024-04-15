@@ -119,13 +119,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     #[derive(Serialize, Deserialize, Debug)]
+    struct Lattice {
+        center: Vec<f64>,
+        spacing: Vec<f64>,
+        minLat: f64,
+        minLon: f64,
+        maxLat: f64,
+        maxLon: f64
+    }
+
+    #[derive(Serialize, Deserialize, Debug)]
     struct SstMetadoc {
         _id: String,
         data_type: String,
         data_info: (Vec<String>, Vec<String>, Vec<Vec<String>>),
         date_updated_argovis: DateTime,
         timeseries: Vec<DateTime>,
-        source: Vec<Sourcedoc>
+        source: Vec<Sourcedoc>,
+        lattice: Lattice
     }
 
     #[derive(Serialize, Deserialize, Debug)]
@@ -178,7 +189,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 source: vec!(String::from("NOAA Optimum Interpolation SST V2")),
                 url: String::from("https://psl.noaa.gov/data/gridded/data.noaa.oisst.v2.html")
             }
-        )
+        ),
+        lattice: Lattice{
+            center: [0.5, 0.5],
+            spacing: [1.0, 1.0],
+            minLat : -89.5,
+            minLon : -179.5,
+            maxLat : 89.5,
+            maxLon : 179.5
+        }
     };
     let metadata_doc = bson::to_document(&metadata).unwrap();
     sst_meta.insert_one(metadata_doc.clone(), None).await?;
